@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.SignInController" spacing="10" alignment="CENTER" styleClass="container">
+    <Label text="Sign In" styleClass="title"/>
+    <TextField fx:id="usernameField" promptText="Username"/>
+    <PasswordField fx:id="passwordField" promptText="Password"/>
+    <Button text="Sign In" onAction="#handleSignIn" styleClass="button"/>
+    <Hyperlink text="Don't have an account? Sign Up" onAction="#handleGoToSignUp"/>
+</VBox>
