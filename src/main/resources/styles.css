@@ -1,0 +1,59 @@
+/* Apply general styling for the container */
+.container {
+    -fx-background-color: #f4f4f9; /* Soft background color */
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+}
+
+/* Style for the TextField (Input fields) */
+.text-field {
+    -fx-font-size: 14px;
+    -fx-pref-width: 250px; /* Set a standard width */
+    -fx-pref-height: 40px; /* Increase height for a more spacious feel */
+    -fx-padding: 10px;
+    -fx-background-color: #fff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 8px;
+    -fx-focus-color: #66afe9; /* Subtle blue when focused */
+    -fx-text-fill: #333; /* Dark text for better contrast */
+}
+
+/* Style for Buttons */
+.button {
+    -fx-font-size: 14px;
+    -fx-pref-width: 250px; /* Make buttons the same width as text fields */
+    -fx-pref-height: 40px;
+    -fx-background-color: #4CAF50; /* Modern green */
+    -fx-text-fill: white;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #888, 10, 0.5, 0, 0); /* Subtle shadow effect */
+}
+
+/* Button hover effect */
+.button:hover {
+    -fx-background-color: #45a049; /* Slightly darker green on hover */
+}
+
+/* Style for ListView */
+.list-view {
+    -fx-pref-width: 300px; /* Width matches text fields */
+    -fx-pref-height: 200px;
+    -fx-background-color: #fff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+/* Adjust the prompt text */
+.text-field:focused {
+    -fx-prompt-text-fill: #aaa; /* Lighter prompt text color */
+}
+
+/* Styling for the VBox container */
+.vbox {
+    -fx-alignment: center;
+    -fx-spacing: 15px;
+}

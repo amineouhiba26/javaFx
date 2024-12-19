@@ -2,10 +2,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.SignInController" spacing="10" alignment="CENTER" styleClass="container">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.SignInController" spacing="15" alignment="CENTER"
+      stylesheets="@styles.css" prefWidth="400" prefHeight="600" styleClass="container">
     <Label text="Sign In" styleClass="title"/>
-    <TextField fx:id="usernameField" promptText="Username"/>
-    <PasswordField fx:id="passwordField" promptText="Password"/>
+    <TextField fx:id="usernameField" promptText="Username" styleClass="text-field"/>
+    <PasswordField fx:id="passwordField" promptText="Password" styleClass="password-field"/>
     <Button text="Sign In" onAction="#handleSignIn" styleClass="button"/>
-    <Hyperlink text="Don't have an account? Sign Up" onAction="#handleGoToSignUp"/>
+    <Hyperlink text="Don't have an account? Sign Up" onAction="#handleGoToSignUp" styleClass="hyperlink"/>
 </VBox>

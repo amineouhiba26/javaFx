@@ -13,6 +13,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Double.parseDouble;
 
@@ -25,6 +28,8 @@ public class MainPageController {
     @FXML
     private Button deleteProductButton; // Button to delete selected product
     @FXML
+    private Button searchProductButton; // Button to search products by name
+    @FXML
     private ListView<String> productsListView; // ListView to display the list of products
     @FXML
     private VBox mainVBox; // Main VBox container for layout
@@ -34,6 +39,12 @@ public class MainPageController {
     private TextField productPriceField; // TextField for entering product price
     @FXML
     private TextField productCategoryField; // TextField for entering product category
+    @FXML
+    private TextField searchProductNameField; // TextField for searching products by name
+    @FXML
+    private TextField priceLimitField; // TextField for entering the price limit
+    @FXML
+    private Button filterByPriceButton; // Button to filter products by price
 
     // Define a Connection variable to keep the connection open, similar to SignInController
     private Connection conn;
@@ -64,7 +75,14 @@ public class MainPageController {
 
         // Action to delete the selected product
         deleteProductButton.setOnAction(event -> handleDeleteProduct());
+
+        // Action to search products by name
+        searchProductButton.setOnAction(event -> searchProductByName());
+
+        filterByPriceButton.setOnAction(event -> filterProductsByPrice());
     }
+
+
 
     /**
      * Handles the deletion of the selected product.
@@ -85,14 +103,9 @@ public class MainPageController {
         boolean confirmation = showConfirmationDialog("Confirm Deletion", "Are you sure you want to delete this product?");
 
         if (confirmation) {
-            try {
-                deleteProductById(productId); // Delete the product by ID
-                showAlert("Success", "Product deleted successfully!");
-                showAllProducts();  // Refresh the product list after deletion
-            } catch (SQLException e) {
-                e.printStackTrace();
-                showAlert("Error", "Failed to delete the product.");
-            }
+            deleteProductById(productId); // Delete the product by ID
+            showAlert("Success", "Product deleted successfully!");
+            showAllProducts();  // Refresh the product list after deletion
         }
     }
 
@@ -157,6 +170,8 @@ public class MainPageController {
         }
     }
 
+
+
     /**
      * Displays all products in the ListView.
      */
@@ -215,19 +230,113 @@ public class MainPageController {
      * @param productId The ID of the product to be deleted.
      * @throws SQLException if any SQL error occurs.
      */
-    public void deleteProductById(int productId) throws SQLException {
-        // Ensure the connection is open via SingletonConnection
-        if (conn == null) {
-            conn = SingletonConnection.getConnection();  // Get the connection if not already open
-        }
-
+    public void deleteProductById(int productId) {
         String deleteQuery = "DELETE FROM products WHERE id=?";
-        try (PreparedStatement st = conn.prepareStatement(deleteQuery)) {
+
+        try (PreparedStatement st = SingletonConnection.getConnection().prepareStatement(deleteQuery)) {
             st.setInt(1, productId);
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Error", "Failed to delete the product.");
+        }
+    }
+
+
+    public void filterProductsByPrice() {
+        String priceLimitText = priceLimitField.getText().trim();
+
+        if (priceLimitText.isEmpty()) {
+            showAlert("Error", "Price limit cannot be empty.");
+            return;
+        }
+        double priceLimit  ;
+        try {
+            priceLimit = parseDouble(priceLimitText);
+
+        }catch (NumberFormatException e) {
+            showAlert("Error", "Price limit must be a number.");
+            return;
+        }
+        String query = "SELECT * FROM products ";
+        try (PreparedStatement stmt =
+                     conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery()) {
+            List<Product> productList = new ArrayList<>();
+            while (rs.next()){
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                double price = rs.getDouble("price");
+                String category = rs.getString("category");
+                Product product = new Product(name, price, category);
+                product.setId(id);
+                productList.add(product);
+            }
+            List<Product> filteredProducts = productList.stream()
+                    .filter(p -> p.getPrice() < priceLimit) // Filter by price limit
+                    .collect(Collectors.toList());
+
+            // Clear the ListView and add the filtered products
+            productsListView.getItems().clear();
+            if (filteredProducts.isEmpty()) {
+                showAlert("Info", "No products found under the price limit.");
+                return;
+            }
+            for (Product p : filteredProducts) {
+                String productDetails = String.format("ID: %d | Name: %s | Price: %.2f | Category: %s",
+                        p.getId(), p.getName(), p.getPrice(), p.getCategory());
+                productsListView.getItems().add(productDetails);
+            }
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Error", "An error occurred while filtering the products: " + e.getMessage());
+
+    } }
+
+    /**
+     * Searches products by name and displays the results in the ListView.
+     */
+    public void searchProductByName() {
+        String productName = searchProductNameField.getText().trim();
+
+        if (productName.isEmpty()) {
+            showAlert("Error", "Please enter a product name to search.");
+            return;
+        }
+
+        String query = "SELECT * FROM products";  // Get all products, no filtering in SQL query
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            productsListView.getItems().clear(); // Clear previous search results
+
+            // Collect all products from ResultSet into a List
+            List<String> allProducts = new ArrayList<>();
+            while (rs.next()) {
+                String productDetails = String.format("ID: %d | Name: %s | Price: %.2f | Category: %s",
+                        rs.getInt("id"), rs.getString("name"), rs.getDouble("price"), rs.getString("category"));
+                allProducts.add(productDetails);
+            }
+
+            // Filter the products using Streams to match the productName
+            List<String> filteredProducts = allProducts.stream()
+                    .filter(product -> product.toLowerCase().contains(productName.toLowerCase()))  // Case-insensitive search
+                    .collect(Collectors.toList());
+
+            // If no products are found, show alert
+            if (filteredProducts.isEmpty()) {
+                showAlert("Info", "No products found matching the search criteria.");
+                return;
+            }
+
+            // Update the ListView with the filtered products
+            productsListView.getItems().addAll(filteredProducts);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Error", "An error occurred while searching for products: " + e.getMessage());
         }
     }
 

@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.MainPageController" spacing="20" alignment="CENTER">
-    <TextField fx:id="productNameField" promptText="Enter product name"/>
-    <TextField fx:id="productPriceField" promptText="Enter product price"/>
-    <TextField fx:id="productCategoryField"
-               promptText="Enter product category"/>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.MainPageController" spacing="20" alignment="CENTER"
+      stylesheets="@styles.css" prefWidth="400" prefHeight="600" styleClass="container">
+    <!-- Search Bar -->
+    <TextField fx:id="searchProductNameField" promptText="Search by product name" styleClass="text-field" />
+    <Button fx:id="searchProductButton" text="Search" onAction="#searchProductByName" styleClass="button" />
 
-    <Button fx:id="addProductButton" text="Add Product" />
-    <Button fx:id="showProductsButton" text="Show All Products" />
-    <ListView fx:id="productsListView" />
-    <Button fx:id="deleteProductButton" text="Delete" onAction="#handleDeleteProduct"/>
+    <!-- Product Details -->
+    <TextField fx:id="productNameField" promptText="Enter product name" styleClass="text-field" />
+    <TextField fx:id="productPriceField" promptText="Enter product price" styleClass="text-field" />
+    <TextField fx:id="productCategoryField" promptText="Enter product category" styleClass="text-field" />
+
+    <!-- Action Buttons -->
+    <Button fx:id="addProductButton" text="Add Product" styleClass="button" />
+    <Button fx:id="showProductsButton" text="Show All Products" styleClass="button" />
+    <ListView fx:id="productsListView" styleClass="list-view" />
+    <Button fx:id="deleteProductButton" text="Delete" onAction="#handleDeleteProduct" styleClass="button" />
+
+
+    <TextField fx:id="priceLimitField" promptText="Enter price limit" />
+    <Button fx:id="filterByPriceButton" text="Filter by Price" />
+
 </VBox>
